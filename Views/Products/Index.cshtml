@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ST10028058_CLDV6212_POE.Models.Product>
+
+<h2>Products</h2>
+<a href="/Products/Create" class="btn btn-primary mb-3">Add New Product</a>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Product ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Product_Id</td>
+                <td>@product.Product_Name</td>
+                <td>@product.Description</td>
+                <td>@product.Product_Price.ToString("C")</td>
+                <td>@product.Quantity</td>
+                <td>
+                    <img src="@product.ImageUrl" alt="Product Image" style="max-width: 100px;" />
+                </td>
+                <td>
+                    <a href="/Products/Details?partitionKey=@product.PartitionKey&rowKey=@product.RowKey" class="btn btn-info">Details</a>
+                    <a href="/Products/Order?productId=@product.Product_Id" class="btn btn-success">Order</a>
+                    <a href="/Products/Delete?partitionKey=@product.PartitionKey&rowKey=@product.RowKey" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

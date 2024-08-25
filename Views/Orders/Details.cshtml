@@ -1,0 +1,22 @@
+﻿@model ST10028058_CLDV6212_POE.Models.Order
+
+<h2>Order Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Order ID</th>
+        <td>@Model.Order_Id</td>
+    </tr>
+
+    <tr>
+        <th>Product ID</th>
+        <td>@Model.Product_ID</td>
+    </tr>
+    <tr>
+        <th>Order Date</th>
+        <td>@Model.Order_Date.ToString("yyyy-MM-dd")</td>
+    </tr>
+
+</table>
+
+<a href="/Orders/Index" class="btn btn-secondary">Back to Orders</a>

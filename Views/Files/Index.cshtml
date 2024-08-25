@@ -1,0 +1,45 @@
+﻿@model List<ST10028058_CLDV6212_POE.Models.FileModel>
+
+<h1 class="mb-4">Uploaded Files</h1>
+
+<!-- Display any messages -->
+@if (TempData["Message"] != null)
+
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<!-- Upload form -->
+<form asp-action="Upload" method="post" enctype="multipart/form-data" class="mb-4">
+    <div class="input-group">
+        <input type="file" name="file" class="form-control" aria-label="Upload" />
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </div>
+</form>
+
+<!-- Display uploaded files -->
+@if (Model != null && Model.Count > 0)
+
+{
+    <div class="list-group">
+        @foreach (var file in Model)
+
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@file.Name</strong><br />
+                    <small>Size: @file.DisplaySize | Last Modified: @file.LastModified?.ToString("g")</small>
+                </div>
+                <a asp-action="DownloadFile" asp-route-fileName="@file.Name" class="btn btn-outline-secondary btn-sm">Download</a>
+            </div>
+        }
+    </div>
+}
+
+else
+
+{
+    <p class="text-muted">No files found or model is null.</p>
+}

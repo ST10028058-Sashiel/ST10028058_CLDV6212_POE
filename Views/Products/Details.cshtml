@@ -1,0 +1,32 @@
+﻿@model ST10028058_CLDV6212_POE.Models.Product
+
+<h2>Product Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Product ID</th>
+        <td>@Model.Product_Id</td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td>@Model.Product_Name</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>@Model.Description</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>@Model.Product_Price.ToString("C")</td>
+    </tr>
+    <tr>
+        <th>Quantity</th>
+        <td>@Model.Quantity</td>
+    </tr>
+    <tr>
+        <th>Image</th>
+        <td><img src="@Model.ImageUrl" alt="Product Image" style="max-width: 200px;" /></td>
+    </tr>
+</table>
+
+<a href="/Products/Index" class="btn btn-secondary">Back to Products</a>

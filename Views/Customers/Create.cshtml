@@ -1,0 +1,19 @@
+﻿@model ST10028058_CLDV6212_POE.Models.Customer
+
+<h2>Create Customer</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Customer_Name">Name</label>
+        <input type="text" class="form-control" id="Customer_Name" name="Customer_Name" required />
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" name="email" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
