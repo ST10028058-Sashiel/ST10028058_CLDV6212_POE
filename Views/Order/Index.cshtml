@@ -1,0 +1,35 @@
+﻿@model IEnumerable<ST10028058_CLDV6212_POE.Models.Order>
+
+<h2>Orders</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer ID</th>
+            <th>Product ID</th>
+            <th>Order Date</th>
+            <th>Order Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Order_Id</td>
+                <td>@order.Customer_ID</td>
+                <td>@order.Product_ID</td>
+                <td>@order.Order_Date.ToString("MM/dd/yyyy")</td>
+                <td>@order.Order_Address</td>
+                <td>
+                    <a href="@Url.Action("Details", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Details</a> |
+                    <a href="@Url.Action("Edit", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Edit</a> |
+                    <a href="@Url.Action("Delete", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-primary">Create New Order</a>

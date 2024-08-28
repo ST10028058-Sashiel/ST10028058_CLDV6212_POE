@@ -7,13 +7,13 @@ public class ProductsController : Controller
 {
     private readonly BlobService _blobService;
     private readonly TableStorageService _tableStorageService;
-    private readonly QueueService _queueService;
+  
 
-    public ProductsController(BlobService blobService, TableStorageService tableStorageService, QueueService queueService)
+    public ProductsController(BlobService blobService, TableStorageService tableStorageService)
     {
         _blobService = blobService;
         _tableStorageService = tableStorageService;
-        _queueService = queueService;
+       
     }
 
     public async Task<IActionResult> Index()
@@ -22,45 +22,8 @@ public class ProductsController : Controller
         return View(products);
     }
 
-    [HttpGet]
-    public IActionResult CreateOrder(int productId)
-    {
-        var order = new Order
-        {
-            Product_ID = productId,
-            Quantity = 1 // Default quantity
-        };
+    
 
-        return View(order);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> SubmitOrder(Order order)
-    {
-        var product = await _tableStorageService.GetProductAsync("ProductsPartition", order.Product_ID.ToString());
-        if (product == null || product.Quantity < order.Quantity)
-        {
-            ModelState.AddModelError("", "Product not found or insufficient quantity.");
-            return View(order);
-        }
-
-        order.RowKey = Guid.NewGuid().ToString();  // Unique identifier
-        order.Order_Date = DateTime.UtcNow;
-        order.PartitionKey = "OrdersPartition";
-
-        // Send the order to the queue
-        var orderJson = Newtonsoft.Json.JsonConvert.SerializeObject(order);
-        await _queueService.SendMessageAsync(orderJson);
-
-        // Update the product quantity
-        product.Quantity -= order.Quantity;
-        await _tableStorageService.UpdateProductAsync(product);
-
-        // Save the order to the table
-        await _tableStorageService.AddOrderAsync(order);
-
-        return RedirectToAction("Index", "Orders");
-    }
 
     public IActionResult Create()
     {
@@ -98,70 +61,7 @@ public class ProductsController : Controller
         return View(product);
     }
 
-    public async Task<IActionResult> OrderProduct(string partitionKey, string rowKey)
-    {
-        var product = await _tableStorageService.GetProductAsync(partitionKey, rowKey);
-        if (product == null)
-        {
-            return NotFound();
-        }
-
-        var order = new Order
-        {
-            Product_ID = product.Product_Id,
-            Order_Date = DateTime.UtcNow,
-            PartitionKey = "OrdersPartition",
-            RowKey = Guid.NewGuid().ToString(),
-            Quantity = 1 // Default quantity
-        };
-
-        return View(order); // Ensure this view expects an Order model
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> OrderProduct(string partitionKey, string rowKey, int quantity)
-    {
-        var product = await _tableStorageService.GetProductAsync(partitionKey, rowKey);
-        if (product == null)
-        {
-            return NotFound();
-        }
-
-        if (product.Quantity < quantity)
-        {
-            ModelState.AddModelError("", "Insufficient product quantity.");
-            return View(new Order
-            {
-                Product_ID = product.Product_Id,
-                Quantity = quantity,
-                Order_Date = DateTime.UtcNow,
-                PartitionKey = "OrdersPartition",
-                RowKey = Guid.NewGuid().ToString()
-            });
-        }
-
-        var order = new Order
-        {
-            Product_ID = product.Product_Id,
-            Quantity = quantity,
-            Order_Date = DateTime.UtcNow,
-            PartitionKey = "OrdersPartition",
-            RowKey = Guid.NewGuid().ToString()
-        };
-
-        var allOrders = await _tableStorageService.GetAllOrdersAsync();
-        int maxOrderId = allOrders.Any() ? allOrders.Max(o => o.Order_Id) : 0;
-        order.Order_Id = maxOrderId + 1;
-
-        await _tableStorageService.AddOrderAsync(order);
-
-        // Update the product quantity
-        product.Quantity -= quantity;
-        await _tableStorageService.UpdateProductAsync(product);
-
-        return RedirectToAction("Index", "Orders");
-    }
-
+    
     public async Task<IActionResult> Delete(string partitionKey, string rowKey)
     {
         var product = await _tableStorageService.GetProductAsync(partitionKey, rowKey);
@@ -173,24 +73,5 @@ public class ProductsController : Controller
         await _tableStorageService.DeleteProductAsync(partitionKey, rowKey);
         return RedirectToAction("Index");
     }
-
-    public async Task<IActionResult> CreateOrderWithDetails(string partitionKey, string rowKey)
-    {
-        var product = await _tableStorageService.GetProductAsync(partitionKey, rowKey);
-        if (product == null)
-        {
-            return NotFound();
-        }
-
-        var order = new Order
-        {
-            Product_ID = product.Product_Id, // Use the Product_Id from the retrieved product
-            Order_Date = DateTime.UtcNow,
-            PartitionKey = "OrdersPartition",
-            RowKey = Guid.NewGuid().ToString(),
-            Quantity = 1 // Default quantity
-        };
-
-        return View(order); // Ensure this view expects an Order model
-    }
+    
 }

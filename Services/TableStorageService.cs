@@ -13,10 +13,6 @@ public class TableStorageService
 
     public TableStorageService(string connectionString)
     {
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new ArgumentNullException(nameof(connectionString), "Azure Storage connection string cannot be null or empty.");
-        }
 
         _productTableClient = new TableClient(connectionString, "Products");
         _customerTableClient = new TableClient(connectionString, "Customers");
@@ -109,16 +105,31 @@ public class TableStorageService
     public async Task<List<Order>> GetAllOrdersAsync()
     {
         var orders = new List<Order>();
+
         await foreach (var order in _orderTableClient.QueryAsync<Order>())
         {
+
             orders.Add(order);
         }
+
         return orders;
     }
 
     public async Task AddOrderAsync(Order order)
     {
-        await _orderTableClient.AddEntityAsync(order);
+        if (string.IsNullOrEmpty(order.PartitionKey) || string.IsNullOrEmpty(order.RowKey))
+        {
+            throw new ArgumentException("PartitionKey and RowKey must be set.");
+        }
+
+        try
+        {
+            await _orderTableClient.AddEntityAsync(order);
+        }
+        catch (RequestFailedException ex)
+        {
+            throw new InvalidOperationException("Error adding order to Table Storage", ex);
+        }
     }
 
     public async Task DeleteOrderAsync(string partitionKey, string rowKey)
@@ -128,7 +139,17 @@ public class TableStorageService
 
     public async Task<Order?> GetOrderAsync(string partitionKey, string rowKey)
     {
-        var response = await _orderTableClient.GetEntityAsync<Order>(partitionKey, rowKey);
-        return response?.Value;
+        try
+        {
+            var response = await _orderTableClient.GetEntityAsync<Order>(partitionKey, rowKey);
+            var order = response.Value;
+
+
+            return order;
+        }
+        catch (RequestFailedException ex) when (ex.Status == 404)
+        {
+            return null;
+        }
     }
 }
