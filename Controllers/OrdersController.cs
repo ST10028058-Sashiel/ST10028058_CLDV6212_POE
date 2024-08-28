@@ -156,6 +156,40 @@ namespace ST10028058_CLDV6212_Part1.Controllers
             return View(updatedOrder);
         }
 
-        // Other methods remain unchanged...
+        // Display the delete confirmation page
+        public async Task<IActionResult> Delete(string partitionKey, string rowKey)
+        {
+            var order = await _tableStorageService.GetOrderAsync(partitionKey, rowKey);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+        // Handle the form submission for deleting an order
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string partitionKey, string rowKey)
+        {
+            var order = await _tableStorageService.GetOrderAsync(partitionKey, rowKey);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            await _tableStorageService.DeleteOrderAsync(partitionKey, rowKey);
+
+            // Notify via queue
+            string message = $"Order with ID {order.Order_Id}, Customer {order.CustomerName}, Product {order.ProductName} has been deleted.";
+            await _queueService.SendMessageAsync(message);
+
+            // Return to the confirmation view instead of redirecting
+            return View("DeleteConfirmed", order);
+        }
+
     }
 }
+
+   
