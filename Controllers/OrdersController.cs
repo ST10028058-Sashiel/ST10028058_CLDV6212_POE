@@ -82,8 +82,8 @@ namespace ST10028058_CLDV6212_Part1.Controllers
             return View(order);
         }
 
-        // Display the edit order form
-        public async Task<IActionResult> Edit(string partitionKey, string rowKey)
+        // Display the details of a specific order
+        public async Task<IActionResult> Details(string partitionKey, string rowKey)
         {
             var order = await _tableStorageService.GetOrderAsync(partitionKey, rowKey);
             if (order == null)
@@ -91,70 +91,9 @@ namespace ST10028058_CLDV6212_Part1.Controllers
                 return NotFound();
             }
 
-            var customers = await _tableStorageService.GetAllCustomersAsync();
-            var products = await _tableStorageService.GetAllProductsAsync();
-
-            // Map IDs back to names for displaying in the edit form
-            order.CustomerName = customers.FirstOrDefault(c => c.Customer_Id == order.Customer_ID)?.Customer_Name;
-            order.ProductName = products.FirstOrDefault(p => p.Product_Id == order.Product_ID)?.Product_Name;
-
-            ViewData["Customers"] = customers;
-            ViewData["Products"] = products;
-
             return View(order);
         }
 
-        // Handle the form submission for editing an existing order
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string partitionKey, string rowKey, Order updatedOrder)
-        {
-            if (ModelState.IsValid)
-            {
-                var order = await _tableStorageService.GetOrderAsync(partitionKey, rowKey);
-                if (order == null)
-                {
-                    return NotFound();
-                }
-
-                var customers = await _tableStorageService.GetAllCustomersAsync();
-                var products = await _tableStorageService.GetAllProductsAsync();
-
-                // Find the selected customer and product
-                var selectedCustomer = customers.FirstOrDefault(c => c.Customer_Name == updatedOrder.CustomerName);
-                var selectedProduct = products.FirstOrDefault(p => p.Product_Name == updatedOrder.ProductName);
-
-                if (selectedCustomer == null || selectedProduct == null)
-                {
-                    ModelState.AddModelError("", "Invalid customer or product selected.");
-                    ViewData["Customers"] = customers;
-                    ViewData["Products"] = products;
-                    return View(updatedOrder);
-                }
-
-                order.Customer_ID = selectedCustomer.Customer_Id;
-                order.Product_ID = selectedProduct.Product_Id;
-
-                // Ensure Order_Date is in UTC
-                order.Order_Date = DateTime.SpecifyKind(updatedOrder.Order_Date, DateTimeKind.Utc);
-                order.Order_Address = updatedOrder.Order_Address;
-
-                await _tableStorageService.AddOrderAsync(order);
-
-                // Send a message to the queue about the update
-                string message = $"Order with ID {order.Order_Id} has been updated. Customer {updatedOrder.CustomerName}, Product {updatedOrder.ProductName}.";
-                await _queueService.SendMessageAsync(message);
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            var allCustomers = await _tableStorageService.GetAllCustomersAsync();
-            var allProducts = await _tableStorageService.GetAllProductsAsync();
-            ViewData["Customers"] = allCustomers;
-            ViewData["Products"] = allProducts;
-
-            return View(updatedOrder);
-        }
 
         // Display the delete confirmation page
         public async Task<IActionResult> Delete(string partitionKey, string rowKey)

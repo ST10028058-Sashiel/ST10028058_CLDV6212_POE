@@ -101,55 +101,67 @@ public class TableStorageService
         return response?.Value;
     }
 
-    // Orders
-    public async Task<List<Order>> GetAllOrdersAsync()
-    {
-        var orders = new List<Order>();
+	// Orders
+	public async Task<List<Order>> GetAllOrdersAsync()
+	{
+		var orders = new List<Order>();
+		await foreach (var order in _orderTableClient.QueryAsync<Order>())
+		{
+			orders.Add(order);
+		}
+		return orders;
+	}
 
-        await foreach (var order in _orderTableClient.QueryAsync<Order>())
-        {
+	public async Task AddOrderAsync(Order order)
+	{
+		if (string.IsNullOrEmpty(order.PartitionKey) || string.IsNullOrEmpty(order.RowKey))
+		{
+			throw new ArgumentException("PartitionKey and RowKey must be set.");
+		}
 
-            orders.Add(order);
-        }
+		try
+		{
+			await _orderTableClient.AddEntityAsync(order);
+		}
+		catch (RequestFailedException ex)
+		{
+			throw new InvalidOperationException("Error adding order to Table Storage", ex);
+		}
+	}
 
-        return orders;
-    }
+	public async Task DeleteOrderAsync(string partitionKey, string rowKey)
+	{
+		await _orderTableClient.DeleteEntityAsync(partitionKey, rowKey);
+	}
 
-    public async Task AddOrderAsync(Order order)
-    {
-        if (string.IsNullOrEmpty(order.PartitionKey) || string.IsNullOrEmpty(order.RowKey))
-        {
-            throw new ArgumentException("PartitionKey and RowKey must be set.");
-        }
+	public async Task<Order?> GetOrderAsync(string partitionKey, string rowKey)
+	{
+		try
+		{
+			var response = await _orderTableClient.GetEntityAsync<Order>(partitionKey, rowKey);
+			return response.Value;
+		}
+		catch (RequestFailedException ex) when (ex.Status == 404)
+		{
+			return null;
+		}
+	}
 
-        try
-        {
-            await _orderTableClient.AddEntityAsync(order);
-        }
-        catch (RequestFailedException ex)
-        {
-            throw new InvalidOperationException("Error adding order to Table Storage", ex);
-        }
-    }
+	// New method to update an order
+	public async Task UpdateOrderAsync(Order order)
+	{
+		if (order == null)
+		{
+			throw new ArgumentNullException(nameof(order), "Order cannot be null.");
+		}
 
-    public async Task DeleteOrderAsync(string partitionKey, string rowKey)
-    {
-        await _orderTableClient.DeleteEntityAsync(partitionKey, rowKey);
-    }
-
-    public async Task<Order?> GetOrderAsync(string partitionKey, string rowKey)
-    {
-        try
-        {
-            var response = await _orderTableClient.GetEntityAsync<Order>(partitionKey, rowKey);
-            var order = response.Value;
-
-
-            return order;
-        }
-        catch (RequestFailedException ex) when (ex.Status == 404)
-        {
-            return null;
-        }
-    }
+		try
+		{
+			await _orderTableClient.UpdateEntityAsync(order, order.ETag, TableUpdateMode.Replace);
+		}
+		catch (RequestFailedException ex)
+		{
+			throw new InvalidOperationException("Error updating order in Table Storage", ex);
+		}
+	}
 }

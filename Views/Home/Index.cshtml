@@ -1,8 +1,43 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home - ABC Retail";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-5">
+    <div class="text-center">
+        <h1>Welcome to ABC Retail!</h1>
+        <p>Your one-stop shop for Funko Pops, controller stands, and gaming peripherals.</p>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://m.media-amazon.com/images/I/81OwcX8OraL._AC_UF894,1000_QL80_.jpg" class="card-img-top" alt="Funko Pops">
+                <div class="card-body">
+                    <h5 class="card-title">Funko Pops</h5>
+                    <p class="card-text">Explore our wide range of Funko Pops featuring your favorite characters from movies, TV shows, and more!</p>
+                    <a href="Products/Index" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://m.media-amazon.com/images/I/51QpX4PSwTL._AC_UF894,1000_QL80_.jpg" class="card-img-top" alt="Controller Stands">
+                <div class="card-body">
+                    <h5 class="card-title">Controller Stands</h5>
+                    <p class="card-text">Keep your gaming setup organized with our stylish and durable controller stands.</p>
+                    <a href="Order/Index" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <img src="https://media.licdn.com/dms/image/C5612AQEtoYXPBj4z8A/article-cover_image-shrink_720_1280/0/1634982740763?e=2147483647&v=beta&t=Oe9SIpLfsRWnGKKR1mEhnIoknMVA0Gr7LyNGnhhlxw0" class="card-img-top" alt="Controller Stands">
+                <div class="card-body">
+                    <h5 class="card-title">Gaming Peripherals</h5>
+                    <p class="card-text">Enhance your gaming experience with our top-quality peripherals, from keyboards to headsets.</p>
+                    <a href="Customers/Index" class="btn btn-primary">Shop Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
