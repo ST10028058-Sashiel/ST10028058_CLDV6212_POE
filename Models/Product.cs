@@ -12,7 +12,7 @@ namespace ST10028058_CLDV6212_POE.Models
         public string? Product_Name { get; set; }  
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
-        public decimal Product_Price { get; set; } 
+        public double Product_Price { get; set; } 
         public int Quantity { get; set; }
 
         // ITableEntity implementation
