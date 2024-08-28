@@ -131,4 +131,6 @@ namespace ST10028058_CLDV6212_Part1.Controllers
     }
 }
 
-   
+
+//# Assistance provided by ChatGPT
+//# Code and support generated with the help of OpenAI's ChatGPT.

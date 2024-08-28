@@ -37,3 +37,6 @@ namespace ST10028058_CLDV6212_POE.Services
 
     
 }
+
+//# Assistance provided by ChatGPT
+//# Code and support generated with the help of OpenAI's ChatGPT.

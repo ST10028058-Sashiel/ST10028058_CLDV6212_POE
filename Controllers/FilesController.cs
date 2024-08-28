@@ -84,3 +84,6 @@ public class FilesController : Controller
         }
     }
 }
+
+//# Assistance provided by ChatGPT
+//# Code and support generated with the help of OpenAI's ChatGPT.
