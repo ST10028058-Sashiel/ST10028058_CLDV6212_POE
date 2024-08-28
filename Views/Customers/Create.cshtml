@@ -3,17 +3,17 @@
 <h2>Create Customer</h2>
 
 <form asp-action="Create" method="post">
-    <div class="form-group">
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="Customer_Name" name="Customer_Name" placeholder="Customer Name" required />
         <label for="Customer_Name">Name</label>
-        <input type="text" class="form-control" id="Customer_Name" name="Customer_Name" required />
     </div>
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" class="form-control" id="email" name="email" required />
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required />
+        <label for="email">Email Address</label>
     </div>
-    <div class="form-group">
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="off" required />
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" name="password" required />
     </div>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
