@@ -11,8 +11,6 @@ public class CustomersController : Controller
         _tableStorageService = tableStorageService;
     }
 
-
-    
     public async Task<IActionResult> Index()
     {
         var customers = await _tableStorageService.GetAllCustomersAsync();
@@ -38,7 +36,6 @@ public class CustomersController : Controller
         await _tableStorageService.AddCustomerAsync(customer);
         return RedirectToAction("Index");
     }
-
 
     public async Task<IActionResult> Delete(string partitionKey, string rowKey)
     {

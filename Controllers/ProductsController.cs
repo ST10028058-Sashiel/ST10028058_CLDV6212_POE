@@ -22,9 +22,6 @@ public class ProductsController : Controller
         return View(products);
     }
 
-    
-
-
     public IActionResult Create()
     {
         return View();

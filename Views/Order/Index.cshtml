@@ -23,9 +23,15 @@
                 <td>@order.Order_Date.ToString("MM/dd/yyyy")</td>
                 <td>@order.Order_Address</td>
                 <td>
-                    <a href="@Url.Action("Details", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Details</a> |
-                    <a href="@Url.Action("Edit", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Edit</a> |
-                    <a href="@Url.Action("Delete", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })">Delete</a>
+                    <form action="@Url.Action("Details", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-info">Details</button>
+                    </form>
+                    <form action="@Url.Action("Edit", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </form>
+                    <form action="@Url.Action("Delete", new { partitionKey = order.PartitionKey, rowKey = order.RowKey })" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }

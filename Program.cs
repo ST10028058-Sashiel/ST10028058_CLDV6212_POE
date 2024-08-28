@@ -21,14 +21,14 @@ builder.Services.AddSingleton(new TableStorageService(configuration.GetConnectio
 builder.Services.AddSingleton<QueueService>(sp =>
 {
     var connectionString = configuration.GetConnectionString("AzureStorage");
-    return new QueueService(connectionString, "products");
+    return new QueueService(connectionString, "productorders");
 });
 
 //Register FileShareService with configuration
 builder.Services.AddSingleton<AzureFileShareService>(sp =>
 {
     var connectionString = configuration.GetConnectionString("AzureStorage");
-    return new AzureFileShareService(connectionString, "files");
+    return new AzureFileShareService(connectionString, "uploads");
 });
 
 var app = builder.Build();
